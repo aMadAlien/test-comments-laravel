@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,4 +23,11 @@ Route::prefix('auth')
         Route::post('register', 'register');
         Route::post('login', 'login');
         Route::post('logout', 'logout');
+    });
+
+Route::middleware('api')
+    ->controller(CommentController::class)
+    ->group(function () {
+        Route::get('comments', 'index');
+        Route::post('comments', 'store');
     });
