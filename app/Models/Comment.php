@@ -12,11 +12,6 @@ class Comment extends Model
     protected $table = 'comments';
 
     protected $fillable = [
-        'user_id', 'parent_id', 'home_page', 'text',
+        'user_id', 'parent_id', 'home_page', 'text', 'file',
     ];
-
-    public function replies()
-    {
-        return $this->hasMany(Comment::class, 'parent_id');
-    }
 }
