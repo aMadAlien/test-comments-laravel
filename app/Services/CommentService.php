@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Storage;
-
+use Intervention\Image\Facades\Image;
 
 class CommentService
 {
@@ -45,7 +45,19 @@ class CommentService
 
     public static function saveFile($file): string
     {
-        $savedFile = Storage::disk('data')->put('comments', $file);
-        return str_replace("comments/", "", $savedFile);
+        $extension = $file->extension();
+        $fileName = '';
+
+        if ($extension === 'txt') {
+            $fileName = Storage::disk('data')->put('comments', $file);
+        } else {
+            $fileName = 'comments/' . time() . $file->getClientOriginalName();
+            Image::make($file)
+                ->fit(320, 240) // size 320 width, 240 height
+                ->encode('jpg', 100)
+                ->save(storage_path().'/data/'.$fileName, 100);
+        }
+
+        return str_replace('comments/', '', $fileName);
     }
 }
