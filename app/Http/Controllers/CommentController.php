@@ -24,15 +24,18 @@ class CommentController extends Controller
                                     ->whereNull('parent_id')
                                     ->join('users', 'comments.user_id', '=', 'users.id')
                                     ->orderBy($sortField, $sortDirection)
-                                    ->paginate(5)
-                                    ->items();
+                                    ->paginate(5);
 
-        $allComments = array_merge($childComments, $topLevelComments);
+        $allComments = array_merge($childComments, $topLevelComments->items());
 
         $comments = CommentService::handleFiles($allComments);
         $comments = CommentService::buildHierarchy($comments);
 
-        return response()->json($comments, 200);
+        return response()->json([
+            'totalPages' => $topLevelComments->lastPage(),
+            'currentPage' => $topLevelComments->currentPage(),
+            'comments' => $comments
+        ], 200);
     }
 
     public function store(CommentRequest $request)
