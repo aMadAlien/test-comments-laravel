@@ -25,6 +25,8 @@ class CommentService
     public static function handleFiles($comments): array
     {
         return array_map(function ($comment) {
+            if (!$comment['file']) return $comment;
+
             $extension = pathinfo($comment['file'], PATHINFO_EXTENSION);
 
             $filePath = Storage::disk('data')->path('/comments/'.$comment['file']);
@@ -36,6 +38,7 @@ class CommentService
                     : 'data:image/'.$extension.';base64, ' . base64_encode($file ?? ''),
                 'extension' => $extension
             ];
+            $comment['created_at'] = date('y.m.d', strtotime($comment['created_at']));
             return $comment;
         }, $comments);
     }
