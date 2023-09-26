@@ -40,10 +40,12 @@ class CommentController extends Controller
 
     public function store(CommentRequest $request)
     {
+        $allowedTags = '<a><i><strong><code>';
+
         $comment = Comment::create([
             'user_id' => $request->userId,
             'home_page' => $request->homePage,
-            'text' => $request->text,
+            'text' => strip_tags($request->text, $allowedTags),
             'parent_id' => $request->replyTo ?? null,
             'file' => !is_null($request->file) ? CommentService::saveFile($request->file) : ''
         ]);
